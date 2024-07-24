@@ -8,7 +8,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>SURVEI ALUMNI | TRACER AMA YOGYAKARTA</title>
+        <title>SURVEI ALUMNI | SISTEM INFORMASI TRACER STUDY - SEKOLAH TINGGI ILMU BISNIS KUMALA NUSA</title>
 
         <!-- Bootstrap Core CSS -->
         <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -61,7 +61,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">TRACER STUDY AMA YPK YOGYAKARTA</a>
+                    <a class="navbar-brand" href="#">TRACER STUDY</a>
                 </div>
                 <!-- /.navbar-header -->
 
