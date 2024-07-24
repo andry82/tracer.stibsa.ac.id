@@ -8,7 +8,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>HALAMAN DEPAN | SISTEM INFORMASI ALUMNI - AMA Yogyakarta</title>
+        <title>HALAMAN DEPAN | SISTEM INFORMASI TRACER STUDY - SEKOLAH TINGGI ILMU BISNIS KUMALA NUSA</title>
 
         <!-- Bootstrap Core CSS -->
         <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -74,20 +74,20 @@
                             </thead>
                             <tbody>
                                 <?php
-                                $result = mysqli_query($mysqli, "SELECT DISTINCT(TAHUNMSMHS) FROM msmhs WHERE STMHSMSMHS='L' ORDER BY TAHUNMSMHS DESC");
+                                $result = mysqli_query($mysqli, "SELECT DISTINCT(m.TAHUNMSMHS) FROM msmhs m, transkrip t WHERE t.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' ORDER BY m.TAHUNMSMHS DESC");
                                 $no = 1;
                                 while ($data = mysqli_fetch_array($result)) {
                                     $angkatan = $data['TAHUNMSMHS'];
-                                    $alumni = mysqli_query($mysqli, "SELECT * FROM msmhs WHERE STMHSMSMHS='L' AND TAHUNMSMHS=$angkatan");
-                                    $total_alumni = mysqli_num_rows($alumni);
-                                    #$bekerja = mysqli_query($mysqli, "SELECT DISTINCT(a.nim) FROM alumni a, alumni_kerja ak WHERE a.nim=ak.nim AND a.thn_masuk=$angkatan");
-                                    #$sudah_bekerja = mysqli_num_rows($bekerja);
+                                    $alumni = mysqli_query($mysqli, "SELECT * FROM msmhs m, transkrip t WHERE t.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' AND m.TAHUNMSMHS=$angkatan");
+                                    $total_alumni = mysqli_num_rows($alumni); 
+                                    $bekerja = mysqli_query($mysqli, "SELECT DISTINCT(ab.nim) FROM msmhs m, alumni_bekerja ab WHERE ab.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' AND m.TAHUNMSMHS=$angkatan");
+                                    $sudah_bekerja = mysqli_num_rows($bekerja);
                                     ?>
                                     <tr>
                                         <td style="text-align: center"><?php echo $angkatan; ?></td>
-                                        <td style="text-align: center"><?php echo $total_alumni; ?></td>
-                                        <td style="text-align: center"></td>
-                                        <td style="text-align: center"></td>
+                                        <td style="text-align: center"><?php echo $total_alumni; ?> ALUMNI</td>
+                                        <td style="text-align: center"><?php echo $sudah_bekerja; ?> ALUMNI</td>
+                                        <td style="text-align: center"><?php echo $total_alumni - $sudah_bekerja; ?> ALUMNI</td>
                                     </tr>
                                     <?php
                                 }

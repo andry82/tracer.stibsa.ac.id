@@ -197,27 +197,27 @@ if ($_SESSION['LEVEL'] != "alumni") {
                                         <td>
                                             <div class="radio ">
                                                 <label>
-                                                    <?php if ($data_kuisioner['f504'] == 1) { ?>
-                                                        <input type="radio" name="f504" value="1" checked>
-                                                    <?php } elseif ($data_kuisioner['f504'] != 1) { ?>
-                                                        <input type="radio" name="f504" value="1">
+                                                    <?php if ($data_kuisioner['kesesuaian'] == 1) { ?>
+                                                        <input type="radio" name="kesesuaian" value="1" checked>
+                                                    <?php } elseif ($data_kuisioner['kesesuaian'] != 1) { ?>
+                                                        <input type="radio" name="kesesuaian" value="1">
     <?php } ?>
                                                     [1] Sesuai                       
                                                 </label>
                                             </div>
                                             <div class="radio">
                                                 <label>
-                                                    <?php if ($data_kuisioner['f504'] == 2) { ?>
-                                                        <input type="radio" name="f504" value="2" checked>
-                                                    <?php } elseif ($data_kuisioner['f504'] != 2) { ?>
-                                                        <input type="radio" name="f504" value="2">
+                                                    <?php if ($data_kuisioner['kesesuaian'] == 2) { ?>
+                                                        <input type="radio" name="kesesuaian" value="2" checked>
+                                                    <?php } elseif ($data_kuisioner['kesesuaian'] != 2) { ?>
+                                                        <input type="radio" name="kesesuaian" value="2">
     <?php } ?>
                                                     [2] Tidak Sesuai
                                                 </label>  
                                             </div>                
                                         </td>
                                     </tr>
-                                    <tr>
+                                    <!--<tr>
                                         <td>Dimana lokasi tempat Anda bekerja? ?</td>
                                         <td>
                                             Propinsi :
@@ -273,7 +273,7 @@ if ($_SESSION['LEVEL'] != "alumni") {
                                             });
                                         });
                                     </script>
-                                    </tr>                                    
+                                    </tr> -->                                   
                                 </table>
                                 <div class="form-group">
                                     <div class="col-sm-offset-4">

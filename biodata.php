@@ -106,11 +106,12 @@ if ($_SESSION['LEVEL'] != "alumni") {
                     $job = mysqli_query($mysqli, "SELECT * FROM alumni_bekerja ab, transkrip t WHERE t.nim=ab.nim AND ab.nim='$nim' ORDER BY ab.tanggal_masuk ASC LIMIT 1");
                     $data = mysqli_fetch_array($job);
                     $count = mysqli_num_rows($job);
+                    if($count != 0){
                     $tanggal_1  = new DateTime($data['tanggal_masuk']);
                     $tanggal_2 = new DateTime($data['tgl_lulus']);
                     $selisih  = $tanggal_1->diff($tanggal_2);
                     $jeda_tunggu = $selisih->y . ' tahun, '. $selisih->m . ' bulan, '. $selisih->d . ' hari';
-                    ?> 
+                    } ?> 
                     <div class="col-lg-12">
                         <form method="post" action="update_biodata.php">       
                             <input type="text" name="nim" value="<?php echo $nim; ?>" hidden>

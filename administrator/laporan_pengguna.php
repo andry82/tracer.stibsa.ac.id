@@ -8,7 +8,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>LAPORAN PENGGUNA | SISTEM INFORMASI ALUMNI - AMA Yogyakarta</title>
+        <title>LAPORAN PENGGUNA | SISTEM INFORMASI TRACER STUDY - SEKOLAH TINGGI ILMU BISNIS KUMALA NUSA</title>
 
         <!-- Bootstrap Core CSS -->
         <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     include '../config.php';
 
 // cek apakah yang mengakses halaman ini sudah login
-    if ($_SESSION['level'] == "") {
+if ($_SESSION['level'] != "tracer") {
         header("location:login.php");
     }
     ?>
@@ -58,128 +58,50 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h4 class="page-header"><i class="fa fa-list fa-fw"></i> LAPORAN PENGGUNA</h4>
-                        <div style="width: 800px;margin: 0px auto;">
+                        <!--<div style="width: 800px;margin: 0px auto;">
                             <canvas id="myChart"></canvas>
                         </div>
-                        <br/>
+                        <br/>-->
                     </div>
                     <!-- /.col-lg-12 -->
                 </div>
                 <div class="row">                    
                     <div class="col-lg-12">
-                        <table width="100%" class="table table-striped table-bordered table-hover">
+                    <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                             <thead>
                                 <tr>
-                                    <th style="text-align: center">NAMA PRODI</th>                                    
-                                    <th style="text-align: center">JUMLAH ALUMNI BEKERJA</th>
+                                    <th style="text-align: center">TAHUN MASUK</th>
+                                    <th style="text-align: center">JUMLAH ALUMNI</th>
+                                    <th style="text-align: center">ALUMNI BEKERJA</th>
                                     <th style="text-align: center">JUMLAH PENGGUNA</th>
+                                    <th style="text-align: center">DETAIL</th>
                                 </tr>
                             </thead>
-                            <tbody>    
+                            <tbody>
                                 <?php
-                                $result = mysqli_query($mysqli, "SELECT * FROM  programstudi WHERE status='1'");
+                                $result = mysqli_query($mysqli, "SELECT DISTINCT(m.TAHUNMSMHS) FROM msmhs m, transkrip t, kuisioner k WHERE k.nim=t.nim AND t.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' AND K.status='1' ORDER BY m.TAHUNMSMHS DESC");
+                                $no = 1;
                                 while ($data = mysqli_fetch_array($result)) {
-                                    $prodi_id = $data['id'];
-                                    ?>                          
+                                    $angkatan = $data['TAHUNMSMHS'];
+                                    $alumni = mysqli_query($mysqli, "SELECT * FROM msmhs m, transkrip t WHERE t.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' AND m.TAHUNMSMHS=$angkatan");
+                                    $total_alumni = mysqli_num_rows($alumni); 
+                                    $bekerja = mysqli_query($mysqli, "SELECT * FROM msmhs m, alumni_bekerja ab WHERE ab.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' AND m.TAHUNMSMHS=$angkatan");
+                                    $sudah_bekerja = mysqli_num_rows($bekerja);
+                                    ?>
                                     <tr>
-                                        <td><?php echo strtoupper($data['nama_prodi']); ?></td>
-                                        <?php
-                                        $alumni = mysqli_query($mysqli, "SELECT DISTINCT a.nim FROM alumni a, alumni_kerja ak WHERE ak.nim=a.nim AND a.prodi_id='$prodi_id'");
-                                        $count_alumni = mysqli_num_rows($alumni);
-                                        ?>
-                                        <td style="text-align: center"><?php echo $count_alumni; ?></td>
-                                        <?php
-                                        $perusahaan = mysqli_query($mysqli, "SELECT * FROM alumni a, alumni_kerja ak WHERE ak.nim=a.nim AND a.prodi_id='$prodi_id'");
-                                        $count_perusahaan = mysqli_num_rows($perusahaan);
-                                        ?>
-                                        <td style="text-align: center"><?php echo $count_perusahaan; ?></td>
+                                        <td style="text-align: center"><?php echo $angkatan; ?></td>
+                                        <td style="text-align: center"><?php echo $total_alumni; ?> ALUMNI</td>
+                                        <td style="text-align: center"><?php echo $sudah_bekerja; ?> ALUMNI</td>
+                                        <td style="text-align: center"><?php echo $sudah_bekerja; ?> PENGGUNA</td>
+                                        <td style="text-align: center"><a href="laporan_detail_pengguna.php?angkatan=<?php echo $angkatan; ?>" class="btn btn-primary btn-xs"><i class="fa fa-book fa-fw"></i> DETAIL</a>
+                                        </td>
                                     </tr>
-                                <?php } ?>
+                                    <?php
+                                }
+                                ?>
                             </tbody>
                         </table>
                         <br />
-                        <table width="100%" class="table table-striped table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th style="text-align: center">TOTAL PENGGUNA</th>
-                                    <th style="text-align: center">KRITERIA</th>
-                                    <th style="text-align: center">TOPIK</th>                                    
-                                    <th style="text-align: center">1</th>
-                                    <th style="text-align: center">2</th>
-                                    <th style="text-align: center">3</th>
-                                    <th style="text-align: center">4</th>
-                                </tr>
-                            </thead>
-                            <?php
-                            $pengguna = mysqli_query($mysqli, "SELECT * FROM alumni a, alumni_kerja ak WHERE ak.nim=a.nim");
-                            $pengguna = mysqli_num_rows($pengguna);
-                            ?>
-                            <tbody>    
-                                <tr>
-                                    <td><?php echo $pengguna; ?></td>
-                                    <td>ETIKA</td>
-                                    <td>4 TOPIK</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td><?php echo $pengguna; ?></td>
-                                    <td>KOMPETENSI</td>
-                                    <td>4 TOPIK</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td><?php echo $pengguna; ?></td>
-                                    <td>KEMAMPUAN BAHASA ASING</td>
-                                    <td>4 TOPIK</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td><?php echo $pengguna; ?></td>
-                                    <td>PENGGUNAAN TEKNOLOGI INFORMASI</td>
-                                    <td>4 TOPIK</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td><?php echo $pengguna; ?></td>
-                                    <td>KEMAMPUAN BERKOMINIKASI</td>
-                                    <td>4 TOPIK</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td><?php echo $pengguna; ?></td>
-                                    <td>KEJASAMA TIM</td>
-                                    <td>4 TOPIK</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td><?php echo $pengguna; ?></td>
-                                    <td>PENGAMBANGAN DIRI</td>
-                                    <td>4 TOPIK</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            </tbody>
-                        </table>
                     </div>
                 </div>                
             </div>            <!-- /#page-wrapper -->
@@ -208,13 +130,13 @@
         });
         </script>
         <?php
-        $alumni_1 = mysqli_query($mysqli, "SELECT DISTINCT a.nim FROM alumni a, alumni_kerja ak WHERE ak.nim=a.nim AND a.prodi_id='1'");
+        $alumni_1 = mysqli_query($mysqli, "SELECT DISTINCT ak.nim FROM msmhs m, alumni_bekerja ak WHERE ak.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61401'");
         $count_alumni_1 = mysqli_num_rows($alumni_1);
-        $alumni_2 = mysqli_query($mysqli, "SELECT DISTINCT a.nim FROM alumni a, alumni_kerja ak WHERE ak.nim=a.nim AND a.prodi_id='2'");
+        $alumni_2 = mysqli_query($mysqli, "SELECT DISTINCT ak.nim FROM msmhs m, alumni_bekerja ak WHERE ak.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61201'");
         $count_alumni_2 = mysqli_num_rows($alumni_2);
-        $perusahaan_1 = mysqli_query($mysqli, "SELECT * FROM alumni a, alumni_kerja ak WHERE ak.nim=a.nim AND a.prodi_id='1'");
+        $perusahaan_1 = mysqli_query($mysqli, "SELECT * FROM msmhs m, alumni_bekerja ak WHERE ak.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61401'");
         $count_perusahaan_1 = mysqli_num_rows($perusahaan_1);
-        $perusahaan_2 = mysqli_query($mysqli, "SELECT * FROM alumni a, alumni_kerja ak WHERE ak.nim=a.nim AND a.prodi_id='2'");
+        $perusahaan_2 = mysqli_query($mysqli, "SELECT * FROM msmhs m, alumni_bekerja ak WHERE ak.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61201'");
         $count_perusahaan_2 = mysqli_num_rows($perusahaan_2);
         ?>
         <script>

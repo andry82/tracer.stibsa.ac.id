@@ -8,7 +8,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>LAPORAN KUISIONER | SISTEM INFORMASI ALUMNI - AMA Yogyakarta</title>
+        <title>LAPORAN KUISIONER | SISTEM INFORMASI TRACER STUDY - SEKOLAH TINGGI ILMU BISNIS KUMALA NUSA</title>
 
         <!-- Bootstrap Core CSS -->
         <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -26,9 +26,9 @@
     include '../config.php';
 
 // cek apakah yang mengakses halaman ini sudah login
-    if ($_SESSION['level'] == "") {
-        header("location:login.php");
-    }
+if ($_SESSION['level'] != "tracer") {
+    header("location:login.php");
+}
     ?>
     <script type='text/javascript'>
         //fungsi displayTime yang dipanggil di bodyOnLoad dieksekusi tiap 1000ms = 1detik
@@ -58,43 +58,47 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h4 class="page-header"><i class="fa fa-list fa-fw"></i> LAPORAN KUISIONER</h4>
-                        <div style="width: 800px;margin: 0px auto;">
+                        <!--<div style="width: 800px;margin: 0px auto;">
                             <canvas id="myChart"></canvas>
                         </div>
-                        <br/>
+                        <br/>-->
                     </div>
                     <!-- /.col-lg-12 -->
                 </div>
                 <div class="row">                    
                     <div class="col-lg-12">
-                        <table width="100%" class="table table-striped table-bordered table-hover">
+                    <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                             <thead>
                                 <tr>
-                                    <th style="text-align: center">NAMA PRODI</th>                                    
+                                    <th style="text-align: center">TAHUN MASUK</th>
                                     <th style="text-align: center">JUMLAH ALUMNI</th>
-                                    <th style="text-align: center">JUMLAH RESPONDEN</th>
+                                    <th style="text-align: center">ALUMNI BEKERJA</th>
+                                    <th style="text-align: center">ALUMNI BELUM BEKERJA</th>
+                                    <th style="text-align: center">DETAIL</th>
                                 </tr>
                             </thead>
-                            <tbody>    
+                            <tbody>
                                 <?php
-                                $result = mysqli_query($mysqli, "SELECT * FROM  programstudi WHERE status='1'");
+                                $result = mysqli_query($mysqli, "SELECT DISTINCT(m.TAHUNMSMHS) FROM msmhs m, transkrip t, kuisioner k WHERE k.nim=t.nim AND t.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' AND K.status='1' ORDER BY m.TAHUNMSMHS DESC");
+                                $no = 1;
                                 while ($data = mysqli_fetch_array($result)) {
-                                    $prodi_id = $data['id'];
-                                    ?>                          
+                                    $angkatan = $data['TAHUNMSMHS'];
+                                    $alumni = mysqli_query($mysqli, "SELECT * FROM msmhs m, transkrip t WHERE t.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' AND m.TAHUNMSMHS=$angkatan");
+                                    $total_alumni = mysqli_num_rows($alumni); 
+                                    $bekerja = mysqli_query($mysqli, "SELECT DISTINCT(ab.nim) FROM msmhs m, alumni_bekerja ab WHERE ab.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' AND m.TAHUNMSMHS=$angkatan");
+                                    $sudah_bekerja = mysqli_num_rows($bekerja);
+                                    ?>
                                     <tr>
-                                        <td><?php echo strtoupper($data['nama_prodi']); ?></td>
-                                        <?php
-                                        $alumni = mysqli_query($mysqli, "SELECT * FROM alumni WHERE prodi_id='$prodi_id'");
-                                        $count_alumni = mysqli_num_rows($alumni);
-                                        ?>
-                                        <td style="text-align: center"><?php echo $count_alumni; ?></td>
-                                        <?php
-                                        $kuisioner = mysqli_query($mysqli, "SELECT * FROM kuisioner k, alumni m WHERE m.nim=k.nim AND m.nikey=k.nikey AND m.prodi_id='$prodi_id' AND k.status='1'");
-                                        $count_responden = mysqli_num_rows($kuisioner);
-                                        ?>
-                                        <td style="text-align: center"><?php echo $count_responden; ?></td>
+                                        <td style="text-align: center"><?php echo $angkatan; ?></td>
+                                        <td style="text-align: center"><?php echo $total_alumni; ?> ALUMNI</td>
+                                        <td style="text-align: center"><?php echo $sudah_bekerja; ?> ALUMNI</td>
+                                        <td style="text-align: center"><?php echo $total_alumni - $sudah_bekerja; ?> ALUMNI</td>
+                                        <td style="text-align: center"><a href="laporan_detail_kuisioner.php?angkatan=<?php echo $angkatan; ?>" class="btn btn-primary btn-xs"><i class="fa fa-book fa-fw"></i> DETAIL</a>
+                                        </td>
                                     </tr>
-                                <?php } ?>
+                                    <?php
+                                }
+                                ?>
                             </tbody>
                         </table>
                         <br />
@@ -126,13 +130,13 @@
         });
         </script>
         <?php
-        $alumni_1 = mysqli_query($mysqli, "SELECT * FROM alumni WHERE prodi_id='1'");
+        $alumni_1 = mysqli_query($mysqli, "SELECT * FROM msmhs WHERE KDPSTMSMHS='61401' AND STMHSMSMHS='L'");
         $count_alumni_1 = mysqli_num_rows($alumni_1);
-        $alumni_2 = mysqli_query($mysqli, "SELECT * FROM alumni WHERE prodi_id='2'");
+        $alumni_2 = mysqli_query($mysqli, "SELECT * FROM msmhs WHERE KDPSTMSMHS='61201' AND STMHSMSMHS='L'");
         $count_alumni_2 = mysqli_num_rows($alumni_2);
-        $kuisioner_1 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, alumni m WHERE m.nim=k.nim AND m.nikey=k.nikey AND m.prodi_id='1' AND k.status='1'");
+        $kuisioner_1 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim  AND m.KDPSTMSMHS='61401' AND k.status='1'");
         $count_responden_1 = mysqli_num_rows($kuisioner_1);
-        $kuisioner_2 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, alumni m WHERE m.nim=k.nim AND m.nikey=k.nikey AND m.prodi_id='2' AND k.status='1'");
+        $kuisioner_2 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim  AND m.KDPSTMSMHS='61201' AND k.status='1'");
         $count_responden_2 = mysqli_num_rows($kuisioner_2);
         ?>
         <script>
@@ -140,7 +144,7 @@
             var myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ["MANAJEMEN ADMINISTRASI", "MANAJEMEN"],
+                    labels: ["MANAJEMEN", "MANAJEMEN RETAIL"],
                     datasets: [{
                             label: 'Jumlah Alumni',
                             data: [<?php echo $count_alumni_1; ?>, <?php echo $count_alumni_2; ?>],

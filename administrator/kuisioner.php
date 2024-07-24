@@ -8,7 +8,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>DATA KUISIONER | SISTEM INFORMASI ALUMNI - AMA Yogyakarta</title>
+        <title>DATA KUISIONER | SISTEM INFORMASI TRACER STUDY - SEKOLAH TINGGI ILMU BISNIS KUMALA NUSA</title>
 
         <!-- Bootstrap Core CSS -->
         <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     include '../config.php';
 
 // cek apakah yang mengakses halaman ini sudah login
-    if ($_SESSION['level'] == "") {
+if ($_SESSION['level'] != "tracer") {
         header("location:login.php");
     }
     ?>
@@ -68,21 +68,23 @@
                                 <tr>
                                     <th style="text-align: center">NIM</th>
                                     <th style="text-align: center">NAMA LENGKAP</th>
-                                    <th style="text-align: center">TAHUN MASUK</th>                                    
-                                    <th style="text-align: center">TAHUN LULUS</th>
+                                    <th style="text-align: center">MASUK</th>                                    
+                                    <th style="text-align: center">LULUS</th>
+                                    <th style="text-align: center">PASSWORD</th>
                                     <th style="text-align: center">NAVIGASI</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                $result = mysqli_query($mysqli, "SELECT * FROM  kuisioner k, alumni a WHERE k.nim=a.nim ORDER BY k.nim ASC");
+                                $result = mysqli_query($mysqli, "SELECT * FROM  msmhs m, transkrip t WHERE t.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' ORDER BY m.TAHUNMSMHS ASC");
                                 $no = 1;
                                 while ($data = mysqli_fetch_array($result)) {
-                                    $nim = $data['nim'];
+                                    $nim = $data['NIMHSMSMHS'];
                                     $nikey = md5($nim);
-                                    $nama_mhs = $data['nama_mhs'];
-                                    $thn_masuk = $data['thn_masuk'];
-                                    $thn_lulus = $data['thn_lulus'];
+                                    $nama_mhs = strtoupper($data['NMMHSMSMHS']);
+                                    $thn_masuk = $data['TAHUNMSMHS'];
+                                    $thn_lulus = date('Y', strtotime($data['tgl_lulus']));
+                                    $password = $data['login_pass'];
                                     //mysqli_query($mysqli, "UPDATE kuisioner SET nikey='$nikey' WHERE nim='$nim'");
                                     ?>
                                     <tr>
@@ -90,6 +92,7 @@
                                         <td><?php echo trim($nama_mhs); ?></td>                                        
                                         <td style="text-align: center"><?php echo $thn_masuk; ?></td>
                                         <td style="text-align: center"><?php echo $thn_lulus; ?></td>
+                                        <td style="text-align: center"><?php echo $password; ?></td>
                                         <td style="text-align: center">
                                             <a href="formulir.php?nim=<?php echo $nim; ?>&key=<?php echo $nikey; ?>" class="btn btn-primary btn-xs"><i class="fa fa-book fa-fw"></i> DETAIL KUISIONER</a>
                                         </td>

@@ -100,7 +100,7 @@ include '../config.php';
                     <li>
                         <a href="laporan_pengguna.php">PENGGUNA</a>
                     </li>            
-                    <li>
+                    <!--<li>
                         <a href="laporan_keselarasan_vertikal.php">KESELARASAN VERTIKAL</a>
                     </li>            
                     <li>
@@ -108,7 +108,7 @@ include '../config.php';
                     </li>            
                     <li>
                         <a href="laporan_kompetensi.php">KOMPETENSI</a>
-                    </li>
+                    </li>-->
                     <li>
                         <a href="laporan_lama_tunggu.php">LAMA TUNGGU</a>
                     </li>
