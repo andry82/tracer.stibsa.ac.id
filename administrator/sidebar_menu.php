@@ -105,10 +105,10 @@ include '../config.php';
                     </li>            
                     <li>
                         <a href="laporan_keselarasan_horisontal.php">KESELARASAN HORISONTAL</a>
-                    </li>            
+                    </li>-->            
                     <li>
-                        <a href="laporan_kompetensi.php">KOMPETENSI</a>
-                    </li>-->
+                        <a href="laporan_kesesuaian_kerja.php">KESESUAIAN KERJA</a>
+                    </li>
                     <li>
                         <a href="laporan_lama_tunggu.php">LAMA TUNGGU</a>
                     </li>

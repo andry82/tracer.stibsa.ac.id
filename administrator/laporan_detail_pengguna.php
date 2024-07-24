@@ -426,7 +426,7 @@ if ($_SESSION['level'] != "tracer") {
             var myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ["MANAJEMEN ADMINISTRASI", "MANAJEMEN"],
+                    labels: ["MANAJEMEN", "MANAJEMEN RETAIL"],
                     datasets: [{
                             label: 'Jumlah Alumni Bekerja',
                             data: [<?php echo $count_alumni_1; ?>, <?php echo $count_alumni_2; ?>],

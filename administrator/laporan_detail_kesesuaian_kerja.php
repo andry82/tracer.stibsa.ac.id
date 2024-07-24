@@ -8,7 +8,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>LAPORAN LAMA TUNGGU | SISTEM INFORMASI TRACER STUDY - SEKOLAH TINGGI ILMU BISNIS KUMALA NUSA</title>
+        <title>LAPORAN KESESUAIAN KERJA | SISTEM INFORMASI TRACER STUDY - SEKOLAH TINGGI ILMU BISNIS KUMALA NUSA</title>
 
         <!-- Bootstrap Core CSS -->
         <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -24,7 +24,7 @@
     <?php
     session_start();
     include '../config.php';
-
+    $angkatan = $_GET['angkatan'];
 // cek apakah yang mengakses halaman ini sudah login
     if ($_SESSION['level'] == "") {
         header("location:login.php");
@@ -57,7 +57,7 @@
             <div id="page-wrapper">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h4 class="page-header"><i class="fa fa-list fa-fw"></i> LAPORAN LAMA TUNGGU</h4>
+                        <h4 class="page-header"><i class="fa fa-list fa-fw"></i> LAPORAN KESESUAIAN KERJA ANGKATAN <?php echo $angkatan; ?></h4>
                         <div style="width: 800px;margin: 0px auto;">
                             <canvas id="myChart"></canvas>
                         </div>
@@ -71,6 +71,7 @@
                             <thead>
                                 <tr>
                                     <th style="text-align: center">NAMA PRODI</th>
+                                    <th style="text-align: center">ALUMNI BEKERJA</th>
                                     <th style="text-align: center">JUMLAH RESPONDEN</th>
                                     <th style="text-align: center">1</th>
                                     <th style="text-align: center">2</th>
@@ -85,22 +86,25 @@
                                     <tr>
                                         <td><?php echo strtoupper($data['NMPSTMSPST']); ?></td>
                                         <?php
-                                        $kuisioner = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='$kode_ps' AND k.status='1'");
+                                        $bekerja = mysqli_query($mysqli, "SELECT * FROM alumni_bekerja ab, msmhs m WHERE m.NIMHSMSMHS=ab.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='$kode_ps' AND m.TAHUNMSMHS='$angkatan'");
+                                        $count_bekerja = mysqli_num_rows($bekerja);
+                                        $kuisioner = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='$kode_ps' AND m.TAHUNMSMHS='$angkatan' AND k.status='1'");
                                         $count_responden = mysqli_num_rows($kuisioner);
                                         ?>
+                                        <td style="text-align: center"><?php echo $count_bekerja; ?></td>
                                         <td style="text-align: center"><?php echo $count_responden; ?></td>
                                         <td style="text-align: center">
                                             <?php
-                                            $f14_1 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='$kode_ps' AND k.f504='1' AND k.status='1'");
-                                            $count_f14_1 = mysqli_num_rows($f14_1);
-                                            echo $count_f14_1;
+                                            $sesuai = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='$kode_ps' AND m.TAHUNMSMHS='$angkatan' AND k.kesesuaian='1' AND k.status='1'");
+                                            $count_sesuai = mysqli_num_rows($sesuai);
+                                            echo $count_sesuai;
                                             ?>    
                                         </td>
                                         <td style="text-align: center">
                                             <?php
-                                            $f14_2 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='$kode_ps' AND k.f504='2' AND k.status='1'");
-                                            $count_f14_2 = mysqli_num_rows($f14_2);
-                                            echo $count_f14_2;
+                                            $t_sesuai = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='$kode_ps' AND m.TAHUNMSMHS='$angkatan' AND k.kesesuaian='2' AND k.status='1'");
+                                            $count_t_sesuai = mysqli_num_rows($t_sesuai);
+                                            echo $count_t_sesuai;
                                             ?>
                                         </td>
                                     </tr>
@@ -108,8 +112,8 @@
                             </tbody>
                         </table>
                         KETERANGAN :<br/>
-                        1 : Mendapat Pekerjaan <= 6 Bulan (Termasuk Sebelum LULUS)<br/>
-                        2 : Mendapat Pekerjaan > 6 Bulan <br/>
+                        1 : Mendapat Pekerjaan Sesuai Bidang<br/>
+                        2 : Mendapat Pekerjaan Tidak Sesuai Bidang<br/>
                         <br />
                         <br />
                     </div>
@@ -140,17 +144,17 @@
         });
         </script>
         <?php
-        $kuisioner_1 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61401' AND k.status='1'");
+        $kuisioner_1 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61401' AND m.TAHUNMSMHS='$angkatan' AND k.status='1'");
         $count_responden_1 = mysqli_num_rows($kuisioner_1);
-        $kuisioner_2 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61201' AND k.status='1'");
+        $kuisioner_2 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61201' AND m.TAHUNMSMHS='$angkatan' AND k.status='1'");
         $count_responden_2 = mysqli_num_rows($kuisioner_2);
-        $f504_1_1 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61401'  AND k.f504='1' AND k.status='1'");
+        $f504_1_1 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61401' AND m.TAHUNMSMHS='$angkatan' AND k.kesesuaian='1' AND k.status='1'");
         $count_f504_1_1 = mysqli_num_rows($f504_1_1);
-        $f504_1_2 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61201' AND k.f504='1' AND k.status='1'");
+        $f504_1_2 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61201' AND m.TAHUNMSMHS='$angkatan' AND k.kesesuaian='1' AND k.status='1'");
         $count_f504_1_2 = mysqli_num_rows($f504_1_2);
-        $f504_2_1 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61401' AND k.f504='2' AND k.status='1'");
+        $f504_2_1 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61401' AND m.TAHUNMSMHS='$angkatan' AND k.kesesuaian='2' AND k.status='1'");
         $count_f504_2_1 = mysqli_num_rows($f504_2_1);
-        $f504_2_2 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61201' AND k.f504='2' AND k.status='1'");
+        $f504_2_2 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61201' AND m.TAHUNMSMHS='$angkatan' AND k.kesesuaian='2' AND k.status='1'");
         $count_f504_2_2 = mysqli_num_rows($f504_2_2);
         ?>
         <script>

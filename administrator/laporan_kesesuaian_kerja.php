@@ -8,7 +8,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>LAPORAN LAMA TUNGGU | SISTEM INFORMASI TRACER STUDY - SEKOLAH TINGGI ILMU BISNIS KUMALA NUSA</title>
+        <title>LAPORAN KESESUAIAN KERJA | SISTEM INFORMASI TRACER STUDY - SEKOLAH TINGGI ILMU BISNIS KUMALA NUSA</title>
 
         <!-- Bootstrap Core CSS -->
         <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -57,60 +57,50 @@
             <div id="page-wrapper">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h4 class="page-header"><i class="fa fa-list fa-fw"></i> LAPORAN LAMA TUNGGU</h4>
-                        <div style="width: 800px;margin: 0px auto;">
+                        <h4 class="page-header"><i class="fa fa-list fa-fw"></i> LAPORAN KESESUAIAN KERJA</h4>
+                        <!--<div style="width: 800px;margin: 0px auto;">
                             <canvas id="myChart"></canvas>
                         </div>
-                        <br/>
+                        <br/>-->
                     </div>
                     <!-- /.col-lg-12 -->
                 </div>
                 <div class="row">                    
                     <div class="col-lg-12">
-                        <table width="100%" class="table table-striped table-bordered table-hover">
+                    <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                             <thead>
                                 <tr>
-                                    <th style="text-align: center">NAMA PRODI</th>
-                                    <th style="text-align: center">JUMLAH RESPONDEN</th>
-                                    <th style="text-align: center">1</th>
-                                    <th style="text-align: center">2</th>
+                                    <th style="text-align: center">TAHUN MASUK</th>
+                                    <th style="text-align: center">JUMLAH ALUMNI</th>
+                                    <th style="text-align: center">ALUMNI BEKERJA</th>
+                                    <th style="text-align: center">ALUMNI BELUM BEKERJA</th>
+                                    <th style="text-align: center">DETAIL</th>
                                 </tr>
                             </thead>
-                            <tbody>    
+                            <tbody>
                                 <?php
-                                $result = mysqli_query($mysqli, "SELECT * FROM mspst");
+                                $result = mysqli_query($mysqli, "SELECT DISTINCT(m.TAHUNMSMHS) FROM msmhs m, transkrip t, kuisioner k WHERE k.nim=t.nim AND t.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' AND k.status='1' ORDER BY m.TAHUNMSMHS DESC");
+                                $no = 1;
                                 while ($data = mysqli_fetch_array($result)) {
-                                    $kode_ps = $data['KDPSTMSPST'];
-                                    ?>                          
+                                    $angkatan = $data['TAHUNMSMHS'];
+                                    $alumni = mysqli_query($mysqli, "SELECT * FROM msmhs m, transkrip t WHERE t.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' AND m.TAHUNMSMHS=$angkatan");
+                                    $total_alumni = mysqli_num_rows($alumni); 
+                                    $bekerja = mysqli_query($mysqli, "SELECT DISTINCT(ab.nim) FROM msmhs m, alumni_bekerja ab WHERE ab.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' AND m.TAHUNMSMHS=$angkatan");
+                                    $sudah_bekerja = mysqli_num_rows($bekerja);
+                                    ?>
                                     <tr>
-                                        <td><?php echo strtoupper($data['NMPSTMSPST']); ?></td>
-                                        <?php
-                                        $kuisioner = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='$kode_ps' AND k.status='1'");
-                                        $count_responden = mysqli_num_rows($kuisioner);
-                                        ?>
-                                        <td style="text-align: center"><?php echo $count_responden; ?></td>
-                                        <td style="text-align: center">
-                                            <?php
-                                            $f14_1 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='$kode_ps' AND k.f504='1' AND k.status='1'");
-                                            $count_f14_1 = mysqli_num_rows($f14_1);
-                                            echo $count_f14_1;
-                                            ?>    
-                                        </td>
-                                        <td style="text-align: center">
-                                            <?php
-                                            $f14_2 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='$kode_ps' AND k.f504='2' AND k.status='1'");
-                                            $count_f14_2 = mysqli_num_rows($f14_2);
-                                            echo $count_f14_2;
-                                            ?>
+                                        <td style="text-align: center"><?php echo $angkatan; ?></td>
+                                        <td style="text-align: center"><?php echo $total_alumni; ?> ALUMNI</td>
+                                        <td style="text-align: center"><?php echo $sudah_bekerja; ?> ALUMNI</td>
+                                        <td style="text-align: center"><?php echo $total_alumni - $sudah_bekerja; ?> ALUMNI</td>
+                                        <td style="text-align: center"><a href="laporan_detail_kesesuaian_kerja.php?angkatan=<?php echo $angkatan; ?>" class="btn btn-primary btn-xs"><i class="fa fa-book fa-fw"></i> DETAIL</a>
                                         </td>
                                     </tr>
-                                <?php } ?>
+                                    <?php
+                                }
+                                ?>
                             </tbody>
                         </table>
-                        KETERANGAN :<br/>
-                        1 : Mendapat Pekerjaan <= 6 Bulan (Termasuk Sebelum LULUS)<br/>
-                        2 : Mendapat Pekerjaan > 6 Bulan <br/>
-                        <br />
                         <br />
                     </div>
                 </div>                
@@ -144,13 +134,13 @@
         $count_responden_1 = mysqli_num_rows($kuisioner_1);
         $kuisioner_2 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61201' AND k.status='1'");
         $count_responden_2 = mysqli_num_rows($kuisioner_2);
-        $f504_1_1 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61401'  AND k.f504='1' AND k.status='1'");
+        $f504_1_1 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61401'  AND k.kesesuaian='1' AND k.status='1'");
         $count_f504_1_1 = mysqli_num_rows($f504_1_1);
-        $f504_1_2 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61201' AND k.f504='1' AND k.status='1'");
+        $f504_1_2 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61201' AND k.kesesuaian='1' AND k.status='1'");
         $count_f504_1_2 = mysqli_num_rows($f504_1_2);
-        $f504_2_1 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61401' AND k.f504='2' AND k.status='1'");
+        $f504_2_1 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61401' AND k.kesesuaian='2' AND k.status='1'");
         $count_f504_2_1 = mysqli_num_rows($f504_2_1);
-        $f504_2_2 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61201' AND k.f504='2' AND k.status='1'");
+        $f504_2_2 = mysqli_query($mysqli, "SELECT * FROM kuisioner k, msmhs m WHERE m.NIMHSMSMHS=k.nim AND m.STMHSMSMHS='L' AND m.KDPSTMSMHS='61201' AND k.kesesuaian='2' AND k.status='1'");
         $count_f504_2_2 = mysqli_num_rows($f504_2_2);
         ?>
         <script>
