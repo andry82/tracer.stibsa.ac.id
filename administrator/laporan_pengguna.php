@@ -79,7 +79,7 @@ if ($_SESSION['level'] != "tracer") {
                             </thead>
                             <tbody>
                                 <?php
-                                $result = mysqli_query($mysqli, "SELECT DISTINCT(m.TAHUNMSMHS) FROM msmhs m, transkrip t, kuisioner k WHERE k.nim=t.nim AND t.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' AND K.status='1' ORDER BY m.TAHUNMSMHS DESC");
+                                $result = mysqli_query($mysqli, "SELECT DISTINCT(m.TAHUNMSMHS) FROM msmhs m, transkrip t, kuisioner k WHERE k.nim=t.nim AND t.nim=m.NIMHSMSMHS AND m.STMHSMSMHS='L' AND k.status='1' ORDER BY m.TAHUNMSMHS DESC");
                                 $no = 1;
                                 while ($data = mysqli_fetch_array($result)) {
                                     $angkatan = $data['TAHUNMSMHS'];
